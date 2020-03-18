@@ -1,7 +1,8 @@
 /*
  *Board: Adafruit Feather M0 RFM9x LoRa 433MHz
  *Might be a good read: https://learn.adafruit.com/adafruit-feather-m0-bluefruit-le/adapting-sketches-to-m0
- *Libraries MutichannelGasSensor.h and MutichannelGasSensor.cpp both adapted for Adafruit SAMD M0 boards (serial vs serialusb)
+ *Temp probes: DS18B20 https://www.adafruit.com/product/381
+ *Moisture probes: FC-28 (MH Series) resistance sensor
 */
 #include <OneWire.h>
 
@@ -32,13 +33,22 @@ byte webGatewayAddress = 0x31;        // address of web gateway
 byte broadcastAddress = 0xFF;         // broadcast address
 byte destination = 0x1;               // destination to send to (web gateway
 byte msgCount = 0;                    // count of outgoing messages
-
-byte fullpayload[12];                 
-int sizeofFullPayload;
+byte fullpayload[12];                 // Full payload to be sent              
+int sizeofFullPayload;                // Size of full payload
 
 bool debug = 1;
+
+//For temp probes
 byte AddrTempProbeA[8] = {0x28, 0x1F, 0x2D, 0x45, 0x92, 0x5, 0x2, 0x30};
 byte AddrTempProbeB[8] = {0x28, 0xEB, 0x9C, 0x45, 0x92, 0x10, 0x2, 0xF};
+
+//For moisture probes
+int moistureSensorA = A1;             // Soil Sensor input at Analog PIN A1
+int moistureSensorB = A2;             // Soil Sensor input at Analog PIN A2
+int ValueRawMoistureSensorA;          // Raw value returned from moisture sensor A
+int ValueRawMoistureSensorB;          // Raw value returned from moisture sensor B
+int ValueCalibratedMoistureSensorA;   // Calibrated (mapped) value returned from moisture sensor A
+int ValueCalibratedMoistureSensorB;   // Calibrated (mapped) Value returned from moisture sensor B
 
 void setup(void) {
   Serial.begin(115200);
@@ -62,16 +72,27 @@ void loop(void) {
   //scanOneWire();
   //idOneWireDevices();
 
-  Serial.println("Probe A");
+  Serial.println("Temp Probe A");
   pollTempProbe(AddrTempProbeA);
   decodeProbeData();
   
   delay(5000);
+
+  Serial.println(" ");
+  Serial.print("Moisture Probe A: ");
+  ValueRawMoistureSensorA = analogRead(moistureSensorA);
+  ValueCalibratedMoistureSensorA = map(ValueRawMoistureSensorA,1023,300,0,100); //map(value, fromLow, fromHigh, toLow, toHigh)
+  Serial.print(ValueRawMoistureSensorA);
+  Serial.print(" (raw) ");
+  Serial.print(ValueCalibratedMoistureSensorA);
+  Serial.println("%");
+  Serial.println(" ");
   
-  Serial.println("Probe B");
+  Serial.println("Temp Probe B");
   pollTempProbe(AddrTempProbeB);
   decodeProbeData();
   
   //LoRa.sleep();
-  delay(15000);
+  //delay(1000*60*30); //delay 30 minutes
+  delay(1000);
 }
