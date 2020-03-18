@@ -80,10 +80,10 @@ void loop(void) {
   Serial.println(" ");
   Serial.print("Moisture Probe A: ");
   ValueRawMoistureSensorA = analogRead(moistureSensorA);
-  ValueRawMoistureSensorA = map(ValueRawMoistureSensorA,1023,300,0,100); //map(value, fromLow, fromHigh, toLow, toHigh)
-  data[0] = byte(ValueRawMoistureSensorA);
   Serial.print(ValueRawMoistureSensorA);
   Serial.print(" (raw) ");
+  ValueRawMoistureSensorA = map(ValueRawMoistureSensorA,1023,581,0,100); //map(value, fromLow, fromHigh, toLow, toHigh)
+  data[0] = byte(ValueRawMoistureSensorA);
   Serial.print(ValueRawMoistureSensorA);
   Serial.println("%");
   Serial.println(" ");
@@ -98,10 +98,10 @@ void loop(void) {
   Serial.println(" ");
   Serial.print("Moisture Probe B: ");
   ValueRawMoistureSensorB = analogRead(moistureSensorB);
-  ValueRawMoistureSensorB = map(ValueRawMoistureSensorB,1023,300,0,100); //map(value, fromLow, fromHigh, toLow, toHigh)
-  data[0] = byte(ValueRawMoistureSensorB);
   Serial.print(ValueRawMoistureSensorB);
   Serial.print(" (raw) ");
+  ValueRawMoistureSensorB = map(ValueRawMoistureSensorB,1023,581,0,100); //map(value, fromLow, fromHigh, toLow, toHigh)
+  data[0] = byte(ValueRawMoistureSensorB);
   Serial.print(ValueRawMoistureSensorB);
   Serial.println("%");
   Serial.println(" ");
