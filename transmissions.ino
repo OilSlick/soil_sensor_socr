@@ -1,4 +1,4 @@
-void broadcastData(byte data[], int sizeofFullPayload, byte ProbeAddr) {
+void broadcastdata(byte data[], int sizeofFullPayload, byte ProbeAddr) {
   delay(200);                           // may be needed?
   LoRa.beginPacket();                   // start packet
   LoRa.write(destination);              // add destination address
@@ -12,4 +12,17 @@ void broadcastData(byte data[], int sizeofFullPayload, byte ProbeAddr) {
 
 //  if ( debug == true && Serial ) displayDebug("broadcastMessage()");
   digitalWrite(RFM95_SS, HIGH);
+  
+  //sizeofFullPayload = sizeof(data);
+  Serial.println(" ");
+  Serial.print("Size of payload after TX: ");
+  Serial.println(sizeofFullPayload);
+  Serial.print("Payload after TX: ");
+  
+  for ( i = 0; i < sizeofFullPayload; i++) 
+        {
+          Serial.print(data[i], HEX);
+          Serial.print(" ");
+        }
+  Serial.println(" ");
 }

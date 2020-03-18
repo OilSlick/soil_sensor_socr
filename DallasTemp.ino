@@ -70,7 +70,7 @@ void pollTempProbe(byte addr[])
   sizeofFullPayload = sizeof(data);
   Serial.print("Size of payload: ");
   Serial.println(sizeofFullPayload);
-  broadcastData(data, sizeofFullPayload, addr[7]);
+  broadcastdata(data, sizeofFullPayload, addr[7]);
 }
 
 void decodeProbeData()
