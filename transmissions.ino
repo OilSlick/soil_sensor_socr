@@ -5,7 +5,7 @@ void broadcastData(byte data[], int sizeofFullPayload, byte ProbeAddr) {
   LoRa.write(localAddress);             // add sender address
   LoRa.write(msgCount);                 // add message ID
   LoRa.write(sizeofFullPayload);        // add payload length
-  LoRa.write(ProbeAddr);                  // Probe Address
+  LoRa.write(ProbeAddr);                // Probe Address
   LoRa.write(data, sizeofFullPayload);  // add payload
   LoRa.endPacket();                     // finish packet and send it
   msgCount++;                           // increment message ID
