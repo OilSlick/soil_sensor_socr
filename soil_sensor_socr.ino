@@ -85,7 +85,7 @@ void loop(void) {
     decodeProbeData();
     memset(data, 0, sizeof(data)); //clear array
   
-    delay(5000);
+    delay(5000); //dealy 5 seconds to allow full transmission of data from this unit to web gateway, to web
 
     if ( Serial )  
     {
@@ -106,14 +106,17 @@ void loop(void) {
       Serial.println("%");
       Serial.println(" ");
     }
-  
     broadcastdata(data, 1, AddrMoistProbeA);
     memset(data, 0, sizeof(data)); //clear array
+
+    delay(5000); //dealy 5 seconds to allow full transmission of data from this unit to web gateway, to web
   
     if ( Serial )Serial.println("Temp Probe B");
     pollTempProbe(AddrTempProbeB);
     decodeProbeData();
     memset(data, 0, sizeof(data)); //clear array
+
+    delay(5000); //dealy 5 seconds to allow full transmission of data from this unit to web gateway, to web
 
     if ( Serial )
     {
