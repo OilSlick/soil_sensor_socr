@@ -12,17 +12,19 @@ void broadcastdata(byte data[], int sizeofFullPayload, byte ProbeAddr) {
 
 //  if ( debug == true && Serial ) displayDebug("broadcastMessage()");
   digitalWrite(RFM95_SS, HIGH);
+
+  if ( Serial && debug == 1 )
+  {
+    Serial.println(" ");
+    Serial.print("Size of payload after TX: ");
+    Serial.println(sizeofFullPayload);
+    Serial.print("Payload after TX: ");
   
-  //sizeofFullPayload = sizeof(data);
-  Serial.println(" ");
-  Serial.print("Size of payload after TX: ");
-  Serial.println(sizeofFullPayload);
-  Serial.print("Payload after TX: ");
-  
-  for ( i = 0; i < sizeofFullPayload; i++) 
+    for ( i = 0; i < sizeofFullPayload; i++) 
         {
           Serial.print(data[i], HEX);
           Serial.print(" ");
         }
   Serial.println(" ");
+  }
 }

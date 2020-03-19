@@ -36,7 +36,7 @@ byte msgCount = 0;                    // count of outgoing messages
 byte fullpayload[12];                 // Full payload to be sent              
 int sizeofFullPayload;                // Size of full payload
 
-bool debug = 1;
+bool debug = 0;
 
 //For temp probes
 byte AddrTempProbeA[8] = {0x28, 0x1F, 0x2D, 0x45, 0x92, 0x5, 0x2, 0x30};
@@ -51,7 +51,7 @@ int ValueRawMoistureSensorA;          // Raw value returned from moisture sensor
 int ValueRawMoistureSensorB;          // Raw value returned from moisture sensor B
 
 void setup(void) {
-  Serial.begin(115200);
+  if ( Serial ) Serial.begin(115200);
   //LoRa.setPins(csPin, resetPin, irqPin);
   LoRa.setPins(RFM95_SS, RFM95_RST, RFM95_INT);
   //LoRa.setTxPower(17, PA_OUTPUT_PA_BOOST_PIN);
@@ -70,41 +70,60 @@ void loop(void) {
   //scanOneWire();
   //idOneWireDevices();
 
-  Serial.println("Temp Probe A");
+  if ( Serial ) Serial.println("Temp Probe A");
   pollTempProbe(AddrTempProbeA);
   decodeProbeData();
   memset(data, 0, sizeof(data)); //clear array
   
   delay(5000);
 
-  Serial.println(" ");
-  Serial.print("Moisture Probe A: ");
+  if ( Serial )  
+  {
+    Serial.println(" ");
+    Serial.print("Moisture Probe A: ");
+  }
   ValueRawMoistureSensorA = analogRead(moistureSensorA);
-  Serial.print(ValueRawMoistureSensorA);
-  Serial.print(" (raw) ");
+  if ( Serial )
+  {
+    Serial.print(ValueRawMoistureSensorA);
+    Serial.print(" (raw) ");
+  }
   ValueRawMoistureSensorA = map(ValueRawMoistureSensorA,1023,581,0,100); //map(value, fromLow, fromHigh, toLow, toHigh)
   data[0] = byte(ValueRawMoistureSensorA);
-  Serial.print(ValueRawMoistureSensorA);
-  Serial.println("%");
-  Serial.println(" ");
+  if ( Serial )
+  {
+    Serial.print(ValueRawMoistureSensorA);
+    Serial.println("%");
+    Serial.println(" ");
+  }
+  
   broadcastdata(data, 1, AddrMoistProbeA);
   memset(data, 0, sizeof(data)); //clear array
   
-  Serial.println("Temp Probe B");
+  if ( Serial )Serial.println("Temp Probe B");
   pollTempProbe(AddrTempProbeB);
   decodeProbeData();
   memset(data, 0, sizeof(data)); //clear array
 
-  Serial.println(" ");
-  Serial.print("Moisture Probe B: ");
+  if ( Serial )
+  {
+    Serial.println(" ");
+    Serial.print("Moisture Probe B: ");
+  }
   ValueRawMoistureSensorB = analogRead(moistureSensorB);
-  Serial.print(ValueRawMoistureSensorB);
-  Serial.print(" (raw) ");
+  if ( Serial )
+  {
+    Serial.print(ValueRawMoistureSensorB);
+    Serial.print(" (raw) ");
+  }
   ValueRawMoistureSensorB = map(ValueRawMoistureSensorB,1023,581,0,100); //map(value, fromLow, fromHigh, toLow, toHigh)
   data[0] = byte(ValueRawMoistureSensorB);
-  Serial.print(ValueRawMoistureSensorB);
-  Serial.println("%");
-  Serial.println(" ");
+  if ( Serial )
+  {
+    Serial.print(ValueRawMoistureSensorB);
+    Serial.println("%");
+    Serial.println(" ");
+  }
   broadcastdata(data, 1, AddrMoistProbeB);
   memset(data, 0, sizeof(data)); //clear array
   

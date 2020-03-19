@@ -1,4 +1,4 @@
-void scanOneWire()
+void scanOneWire()    //function not necessary in production and not used
 {
   if ( !ds.search(addr)) 
   {
@@ -22,7 +22,7 @@ void scanOneWire()
   Serial.println();
 }
 
-void idOneWireDevices()
+void idOneWireDevices() //function not necessary in production and not used
 {
     // the first ROM byte indicates which chip
   switch (addr[0]) {
@@ -56,20 +56,28 @@ void pollTempProbe(byte addr[])
   present = ds.reset();
   ds.select(addr);    
   ds.write(0xBE);         // Read Scratchpad
-  
 
-  Serial.print("  Data = ");
-  Serial.print(present, HEX);
-  Serial.print(" ");
-  for ( i = 0; i < 9; i++) {           // we need 9 bytes
-    data[i] = ds.read();
-    Serial.print(data[i], HEX);
+  if ( Serial && debug == 1 )
+  {
+    Serial.print("  Data = ");
+    Serial.print(present, HEX);
     Serial.print(" ");
   }
-  Serial.println();
+  for ( i = 0; i < 9; i++) {           // we need 9 bytes
+    data[i] = ds.read();
+    if ( Serial && debug == 1 )
+    {
+      Serial.print(data[i], HEX);
+      Serial.print(" ");
+    }
+  }
+  if ( Serial && debug == 1 ) Serial.println();
   sizeofFullPayload = sizeof(data);
-  Serial.print("Size of payload: ");
-  Serial.println(sizeofFullPayload);
+  if ( Serial && debug == 1 )
+  {
+    Serial.print("Size of payload: ");
+    Serial.println(sizeofFullPayload);
+  }
   broadcastdata(data, sizeofFullPayload, addr[7]);
 }
 
@@ -84,9 +92,12 @@ void decodeProbeData()
 
   celsius = (float)raw / 16.0;
   fahrenheit = celsius * 1.8 + 32.0;
-  Serial.print("  Temperature = ");
-  Serial.print(celsius);
-  Serial.print(" Celsius, ");
-  Serial.print(fahrenheit);
-  Serial.println(" Fahrenheit");
+  if ( Serial )
+  {
+   Serial.print("  Temperature = ");
+    Serial.print(celsius);
+    Serial.print(" Celsius, ");
+    Serial.print(fahrenheit);
+    Serial.println(" Fahrenheit"); 
+  }
 }
