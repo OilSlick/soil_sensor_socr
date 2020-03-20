@@ -40,9 +40,10 @@ int sizeofFullPayload;                // Size of full payload
 //for local device
 bool debug = 0;
 long previousMillis = 0;              //stores the last time data collected
-long intervalMinutes = 30000;        //Polling interval in minutes * 60 * 1000
+long intervalMinutes = 900000;        //Polling interval in minutes * 60 * 1000
 #define TempPowerPin 6
-
+#define VBATPIN A7
+   
 //For temp probes
 byte AddrTempProbeA[8] = {0x28, 0x1F, 0x2D, 0x45, 0x92, 0x5, 0x2, 0x30};
 byte AddrTempProbeB[8] = {0x28, 0xEB, 0x9C, 0x45, 0x92, 0x10, 0x2, 0xF};
@@ -56,6 +57,7 @@ int ValueRawMoistureSensorA;          // Raw value returned from moisture sensor
 int ValueRawMoistureSensorB;          // Raw value returned from moisture sensor B
 
 void setup(void) {
+  if ( debug == 1 ) intervalMinutes = 30000; //if debug, use 30-seccond polling intervals
   pinMode(TempPowerPin, OUTPUT); 
   pinMode(OneWirePin, INPUT_PULLUP);    
   digitalWrite(TempPowerPin, LOW);
@@ -149,5 +151,17 @@ void loop(void) {
     digitalWrite(TempPowerPin, LOW);
   
     LoRa.sleep();
+
+    //check battery level
+    if ( Serial && debug == 1 ) checkBatt();
    }
+}
+
+void checkBatt()
+{
+  float measuredvbat = analogRead(VBATPIN);
+  measuredvbat *= 2;    // we divided by 2, so multiply back
+  measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
+  measuredvbat /= 1024; // convert to voltage
+  Serial.print("VBat: " ); Serial.println(measuredvbat);
 }
