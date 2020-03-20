@@ -13,7 +13,8 @@
 // The DallasTemperature library can do all this work for you!
 // https://github.com/milesburton/Arduino-Temperature-Control-Library
 
-OneWire  ds(5);  // on pin 10 (a 4.7K resistor is necessary)
+#define OneWirePin 5
+OneWire  ds(OneWirePin);  // on pin 10 (a 4.7K resistor is necessary)
 byte i;
 byte present = 0;
 byte type_s;
@@ -39,7 +40,8 @@ int sizeofFullPayload;                // Size of full payload
 //for local device
 bool debug = 0;
 long previousMillis = 0;              //stores the last time data collected
-long intervalMinutes = 60000;        //Polling interval in minutes * 60 * 1000
+long intervalMinutes = 30000;        //Polling interval in minutes * 60 * 1000
+#define TempPowerPin 6
 
 //For temp probes
 byte AddrTempProbeA[8] = {0x28, 0x1F, 0x2D, 0x45, 0x92, 0x5, 0x2, 0x30};
@@ -54,8 +56,13 @@ int ValueRawMoistureSensorA;          // Raw value returned from moisture sensor
 int ValueRawMoistureSensorB;          // Raw value returned from moisture sensor B
 
 void setup(void) {
+  pinMode(TempPowerPin, OUTPUT); 
+  pinMode(OneWirePin, INPUT_PULLUP);    
+  digitalWrite(TempPowerPin, LOW);
   if ( Serial ) Serial.begin(115200);
   delay(2000);
+  
+  
   //LoRa.setPins(csPin, resetPin, irqPin);
   LoRa.setPins(RFM95_SS, RFM95_RST, RFM95_INT);
   //LoRa.setTxPower(17, PA_OUTPUT_PA_BOOST_PIN);
@@ -74,11 +81,11 @@ void loop(void) {
   unsigned long currentMillis = millis();
   if(currentMillis - previousMillis > intervalMinutes)
   {
+    digitalWrite(TempPowerPin, HIGH);
     previousMillis = currentMillis;
 
-
-    //scanOneWire();
-    //idOneWireDevices();
+    //scanOneWire();            //function not necessary in production and not used
+    //idOneWireDevices();       //function not necessary in production and not used
   
     if ( Serial ) Serial.println("Temp Probe A");
     pollTempProbe(AddrTempProbeA);
@@ -139,6 +146,7 @@ void loop(void) {
     }
     broadcastdata(data, 1, AddrMoistProbeB);
     memset(data, 0, sizeof(data)); //clear array
+    digitalWrite(TempPowerPin, LOW);
   
     LoRa.sleep();
    }

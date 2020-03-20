@@ -94,7 +94,7 @@ void decodeProbeData()
   fahrenheit = celsius * 1.8 + 32.0;
   if ( Serial )
   {
-   Serial.print("  Temperature = ");
+    Serial.print("  Temperature = ");
     Serial.print(celsius);
     Serial.print(" Celsius, ");
     Serial.print(fahrenheit);

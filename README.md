@@ -17,3 +17,11 @@ https://io.adafruit.com/mcwresearch/dashboards/soil-sensor-socr
 Without an account with Adafruit, you will have to manually refresh the page to see the very latest data. But visitors without accounts can still see a snapshot of the most recent (and all historic) data. 
 
 As of March 19, 2020, the data is not real data. The sensor is sitting on my desk. My next step is to take it from the breadboard to a water-proof home and get it deployed and collecting real data. 
+
+### Hardware To-Do
+* [ ] Complete Perma-Proto board
+* [ ] Connect Adafruit TPL5110 Low Power Timer Breakout
+* [ ] Connect proper antenna
+
+### Software To-Do
+* [ ] [#1](https://github.com/OilSlick/soil_sensor_socr/issues/1#issue-584777977) Reduce number of transmissions
