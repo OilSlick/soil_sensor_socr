@@ -40,7 +40,7 @@ int sizeofFullPayload;                // Size of full payload
 //for local device
 bool debug = 1;
 long previousMillis = 0;              //stores the last time data collected
-long intervalMinutes = 900000;        //Polling interval in minutes * 60 * 1000
+long intervalMinutes = 300000;        //Polling interval in minutes * 60 * 1000
 #define VBATPIN A7
    
 //For temp probes
@@ -88,16 +88,16 @@ void loop(void) {
   
     if ( Serial ) Serial.println("Temp Probe A");
     pollTempProbe(AddrTempProbeA);
-    decodeProbeData();
-  
-    delay(5000); //dealy 5 seconds to allow full transmission of data from this unit to web gateway, to web
-    
+    if ( Serial ) decodeProbeData();
+
+    delay(5000);
     checkMoisture('A');
+    
     delay(5000); //dealy 5 seconds to allow full transmission of data from this unit to web gateway, to web
   
-    if ( Serial )Serial.println("Temp Probe B");
+    if ( Serial ) Serial.println("Temp Probe B");
     pollTempProbe(AddrTempProbeB);
-    decodeProbeData();
+    if ( Serial ) decodeProbeData();
 
     delay(5000); //dealy 5 seconds to allow full transmission of data from this unit to web gateway, to web
 
@@ -142,27 +142,12 @@ void checkMoisture(int probeID)
     }
   int ValueRawMoistureSensor = analogRead(moisturePin);
 
-  /*
-  byte testpayload[2];
-  int myVal = ValueRawMoistureSensor;
-
-  testpayload[0] = highByte(myVal);
-  testpayload[1] = lowByte(myVal);
-
-  myVal = ((int)(testpayload[0]) << 8)
-           + testpayload[1];
-
-  Serial.print("myval ");
-  Serial.println(myVal);
-  */
-
-  //encode moisture data
+  //encode moisture data and add it to the last two bytes of data[] adapted from: https://www.thethingsnetwork.org/docs/devices/bytes.html
   data[0] = highByte(ValueRawMoistureSensor);
   data[1] = lowByte(ValueRawMoistureSensor);
 
-  //data[0] = byte(ValueRawMoistureSensor);
   broadcastdata(data, 2, AddrMoistProbe);
-  memset(data, 0, sizeof(data)); //clear array
+  
   if ( Serial )  
     {
       Serial.println(" ");

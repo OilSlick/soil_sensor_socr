@@ -88,16 +88,13 @@ void decodeProbeData()
   // be stored to an "int16_t" type, which is always 16 bits
   // even when compiled on a 32 bit processor.
   int16_t raw = (data[1] << 8) | data[0];
-  byte cfg = (data[4] & 0x60);
+  //byte cfg = (data[4] & 0x60);
 
   celsius = (float)raw / 16.0;
   fahrenheit = celsius * 1.8 + 32.0;
-  if ( Serial )
-  {
-    Serial.print("  Temperature = ");
-    Serial.print(celsius);
-    Serial.print(" Celsius, ");
-    Serial.print(fahrenheit);
-    Serial.println(" Fahrenheit"); 
-  }
+  Serial.print("  Temperature = ");
+  Serial.print(celsius);
+  Serial.print(" Celsius, ");
+  Serial.print(fahrenheit);
+  Serial.println(" Fahrenheit"); 
 }
