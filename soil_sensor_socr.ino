@@ -48,8 +48,8 @@ byte AddrTempProbeA[8] = {0x28, 0x1F, 0x2D, 0x45, 0x92, 0x5, 0x2, 0x30};
 byte AddrTempProbeB[8] = {0x28, 0xEB, 0x9C, 0x45, 0x92, 0x10, 0x2, 0xF};
 
 //For moisture probes
-byte AddrMoistProbe;                  // Empty byte to be populated by checkMoisture()
 int moisturePin;                      // Empty byte to be populated by checkMoisture()
+byte AddrMoistProbe;                  // Empty byte to be populated by checkMoisture()
 byte AddrMoistProbeA = 0x1;           // ID for moisture probe A
 byte AddrMoistProbeB = 0x2;           // ID for moisture probe B
 int moisturePinA = A1;                // Soil Sensor input at Analog PIN A1
@@ -149,21 +149,46 @@ void checkMoisture(int probeID)
 {
   if (probeID == 'A')             //If moisture probe A
   {
-    Serial.print("probeID: ");
-    Serial.println(probeID);
-    byte AddrMoistProbe = AddrMoistProbeA;
+    AddrMoistProbe = AddrMoistProbeA;
     moisturePin = moisturePinA;
   }
   else if (probeID == 'B')         //If moisture probe B
   {
-    Serial.print("probeID: ");
-    Serial.println(probeID);
-    byte AddrMoistProbe = AddrMoistProbeB;
+    AddrMoistProbe = AddrMoistProbeB;
     moisturePin = moisturePinB;
   }
+  if ( Serial )
+    {
+      Serial.println("===");
+      Serial.print("probeID: ");
+      Serial.println(probeID);
+      Serial.print("AddrMoistProbe: ");
+      Serial.println(AddrMoistProbe, HEX);
+      Serial.print("moisturePin: ");
+      Serial.println(moisturePin);
+    }
   int ValueRawMoistureSensor = analogRead(moisturePin);
-  data[0] = byte(ValueRawMoistureSensor);
-  broadcastdata(data, 1, AddrMoistProbe);
+
+  /*
+  byte testpayload[2];
+  int myVal = ValueRawMoistureSensor;
+
+  testpayload[0] = highByte(myVal);
+  testpayload[1] = lowByte(myVal);
+
+  myVal = ((int)(testpayload[0]) << 8)
+           + testpayload[1];
+
+  Serial.print("myval ");
+  Serial.println(myVal);
+  */
+
+  //encode moisture data
+  data[0] = highByte(ValueRawMoistureSensor);
+  data[1] = lowByte(ValueRawMoistureSensor);
+
+  //data[0] = byte(ValueRawMoistureSensor);
+  broadcastdata(data, 2, AddrMoistProbe);
   memset(data, 0, sizeof(data)); //clear array
   if ( Serial )  
     {
@@ -177,5 +202,6 @@ void checkMoisture(int probeID)
       Serial.print(ValueRawMoistureSensor);
       Serial.println("%");
       Serial.println(" ");
+      Serial.println("===");
     }
 }
