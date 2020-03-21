@@ -14,7 +14,7 @@
 // https://github.com/milesburton/Arduino-Temperature-Control-Library
 
 #define OneWirePin 5
-OneWire  ds(OneWirePin);  // on pin 10 (a 4.7K resistor is necessary)
+OneWire  ds(OneWirePin);
 byte i;
 byte present = 0;
 byte type_s;
@@ -38,10 +38,9 @@ byte fullpayload[12];                 // Full payload to be sent
 int sizeofFullPayload;                // Size of full payload
 
 //for local device
-bool debug = 0;
+bool debug = 1;
 long previousMillis = 0;              //stores the last time data collected
 long intervalMinutes = 900000;        //Polling interval in minutes * 60 * 1000
-#define TempPowerPin 6
 #define VBATPIN A7
    
 //For temp probes
@@ -57,10 +56,7 @@ int ValueRawMoistureSensorA;          // Raw value returned from moisture sensor
 int ValueRawMoistureSensorB;          // Raw value returned from moisture sensor B
 
 void setup(void) {
-  if ( debug == 1 ) intervalMinutes = 30000; //if debug, use 30-seccond polling intervals
-  pinMode(TempPowerPin, OUTPUT); 
-  pinMode(OneWirePin, INPUT_PULLUP);    
-  digitalWrite(TempPowerPin, LOW);
+  if ( debug == 1 ) intervalMinutes = 30000; //if debug, use 30-seccond polling intervals   
   if ( Serial ) Serial.begin(115200);
   delay(2000);
   
@@ -76,14 +72,13 @@ void setup(void) {
     if ( Serial ) Serial.print(".");
       delay(500);
   }
-  if ( Serial ) Serial.println("Setup done.Counting millis...");
+  if ( Serial ) Serial.println("Setup done.Counting electric sheep...");
 }
 
 void loop(void) {
   unsigned long currentMillis = millis();
   if(currentMillis - previousMillis > intervalMinutes)
   {
-    digitalWrite(TempPowerPin, HIGH);
     previousMillis = currentMillis;
 
     //scanOneWire();            //function not necessary in production and not used
@@ -148,7 +143,6 @@ void loop(void) {
     }
     broadcastdata(data, 1, AddrMoistProbeB);
     memset(data, 0, sizeof(data)); //clear array
-    digitalWrite(TempPowerPin, LOW);
   
     LoRa.sleep();
 
