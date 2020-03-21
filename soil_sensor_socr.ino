@@ -48,10 +48,12 @@ byte AddrTempProbeA[8] = {0x28, 0x1F, 0x2D, 0x45, 0x92, 0x5, 0x2, 0x30};
 byte AddrTempProbeB[8] = {0x28, 0xEB, 0x9C, 0x45, 0x92, 0x10, 0x2, 0xF};
 
 //For moisture probes
-byte AddrMoistProbeA = 0x1;         // ID for moisture probe A
-byte AddrMoistProbeB = 0x2;         // ID for moisture probe B
-int moistureSensorA = A1;             // Soil Sensor input at Analog PIN A1
-int moistureSensorB = A2;             // Soil Sensor input at Analog PIN A2
+byte AddrMoistProbe;                  // Empty byte to be populated by checkMoisture()
+int moisturePin;                      // Empty byte to be populated by checkMoisture()
+byte AddrMoistProbeA = 0x1;           // ID for moisture probe A
+byte AddrMoistProbeB = 0x2;           // ID for moisture probe B
+int moisturePinA = A1;                // Soil Sensor input at Analog PIN A1
+int moisturePinB = A2;                // Soil Sensor input at Analog PIN A2
 int ValueRawMoistureSensorA;          // Raw value returned from moisture sensor A
 int ValueRawMoistureSensorB;          // Raw value returned from moisture sensor B
 
@@ -72,7 +74,7 @@ void setup(void) {
     if ( Serial ) Serial.print(".");
       delay(500);
   }
-  if ( Serial ) Serial.println("Setup done.Counting electric sheep...");
+  if ( Serial ) Serial.println("Setup done. Counting electric sheep...");
 }
 
 void loop(void) {
@@ -91,27 +93,8 @@ void loop(void) {
   
     delay(5000); //dealy 5 seconds to allow full transmission of data from this unit to web gateway, to web
 
-    if ( Serial )  
-    {
-      Serial.println(" ");
-      Serial.print("Moisture Probe A: ");
-    }
-    ValueRawMoistureSensorA = analogRead(moistureSensorA);
-    if ( Serial )
-    {
-      Serial.print(ValueRawMoistureSensorA);
-      Serial.print(" (raw) ");
-    }
-    ValueRawMoistureSensorA = map(ValueRawMoistureSensorA,1023,581,0,100); //map(value, fromLow, fromHigh, toLow, toHigh)
-    data[0] = byte(ValueRawMoistureSensorA);
-    if ( Serial )
-    {
-      Serial.print(ValueRawMoistureSensorA);
-      Serial.println("%");
-      Serial.println(" ");
-    }
-    broadcastdata(data, 1, AddrMoistProbeA);
-    memset(data, 0, sizeof(data)); //clear array
+    
+    checkMoisture('A');
 
     delay(5000); //dealy 5 seconds to allow full transmission of data from this unit to web gateway, to web
   
@@ -122,12 +105,14 @@ void loop(void) {
 
     delay(5000); //dealy 5 seconds to allow full transmission of data from this unit to web gateway, to web
 
-    if ( Serial )
+    checkMoisture('B');
+
+    /*if ( Serial )
     {
       Serial.println(" ");
-      Serial.print("Moisture Probe B: ");
+      Serial.print("==Original method== Moisture Probe B: ");
     }
-    ValueRawMoistureSensorB = analogRead(moistureSensorB);
+    ValueRawMoistureSensorB = analogRead(moisturePinB);
     if ( Serial )
     {
       Serial.print(ValueRawMoistureSensorB);
@@ -142,12 +127,13 @@ void loop(void) {
       Serial.println(" ");
     }
     broadcastdata(data, 1, AddrMoistProbeB);
-    memset(data, 0, sizeof(data)); //clear array
+    memset(data, 0, sizeof(data)); //clear array*/
   
     LoRa.sleep();
 
     //check battery level
     if ( Serial && debug == 1 ) checkBatt();
+    if ( Serial ) Serial.println("Counting electric sheep...");
    }
 }
 
@@ -158,4 +144,38 @@ void checkBatt()
   measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
   measuredvbat /= 1024; // convert to voltage
   Serial.print("VBat: " ); Serial.println(measuredvbat);
+}
+void checkMoisture(int probeID)
+{
+  if (probeID == 'A')             //If moisture probe A
+  {
+    Serial.print("probeID: ");
+    Serial.println(probeID);
+    byte AddrMoistProbe = AddrMoistProbeA;
+    moisturePin = moisturePinA;
+  }
+  else if (probeID == 'B')         //If moisture probe B
+  {
+    Serial.print("probeID: ");
+    Serial.println(probeID);
+    byte AddrMoistProbe = AddrMoistProbeB;
+    moisturePin = moisturePinB;
+  }
+  int ValueRawMoistureSensor = analogRead(moisturePin);
+  data[0] = byte(ValueRawMoistureSensor);
+  broadcastdata(data, 1, AddrMoistProbe);
+  memset(data, 0, sizeof(data)); //clear array
+  if ( Serial )  
+    {
+      Serial.println(" ");
+      Serial.print("Moisture Probe: ");
+      if (probeID == 'A') Serial.print("A ");
+      if (probeID == 'B') Serial.print("B ");
+      Serial.print(ValueRawMoistureSensor);
+      Serial.print(" (raw) ");
+      ValueRawMoistureSensor = map(ValueRawMoistureSensor,1023,581,0,100); //map(value, fromLow, fromHigh, toLow, toHigh)
+      Serial.print(ValueRawMoistureSensor);
+      Serial.println("%");
+      Serial.println(" ");
+    }
 }
