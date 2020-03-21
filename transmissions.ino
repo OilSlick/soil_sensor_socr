@@ -9,6 +9,7 @@ void broadcastdata(byte data[], int sizeofFullPayload, byte ProbeAddr) {
   LoRa.write(data, sizeofFullPayload);  // add payload
   LoRa.endPacket();                     // finish packet and send it
   msgCount++;                           // increment message ID
+  memset(data, 0, sizeof(data)); //clear array
 
 //  if ( debug == true && Serial ) displayDebug("broadcastMessage()");
   digitalWrite(RFM95_SS, HIGH);

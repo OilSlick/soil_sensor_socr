@@ -89,46 +89,19 @@ void loop(void) {
     if ( Serial ) Serial.println("Temp Probe A");
     pollTempProbe(AddrTempProbeA);
     decodeProbeData();
-    memset(data, 0, sizeof(data)); //clear array
   
     delay(5000); //dealy 5 seconds to allow full transmission of data from this unit to web gateway, to web
-
     
     checkMoisture('A');
-
     delay(5000); //dealy 5 seconds to allow full transmission of data from this unit to web gateway, to web
   
     if ( Serial )Serial.println("Temp Probe B");
     pollTempProbe(AddrTempProbeB);
     decodeProbeData();
-    memset(data, 0, sizeof(data)); //clear array
 
     delay(5000); //dealy 5 seconds to allow full transmission of data from this unit to web gateway, to web
 
     checkMoisture('B');
-
-    /*if ( Serial )
-    {
-      Serial.println(" ");
-      Serial.print("==Original method== Moisture Probe B: ");
-    }
-    ValueRawMoistureSensorB = analogRead(moisturePinB);
-    if ( Serial )
-    {
-      Serial.print(ValueRawMoistureSensorB);
-      Serial.print(" (raw) ");
-    }
-    ValueRawMoistureSensorB = map(ValueRawMoistureSensorB,1023,581,0,100); //map(value, fromLow, fromHigh, toLow, toHigh)
-    data[0] = byte(ValueRawMoistureSensorB);
-    if ( Serial )
-    {
-      Serial.print(ValueRawMoistureSensorB);
-      Serial.println("%");
-      Serial.println(" ");
-    }
-    broadcastdata(data, 1, AddrMoistProbeB);
-    memset(data, 0, sizeof(data)); //clear array*/
-  
     LoRa.sleep();
 
     //check battery level
