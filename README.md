@@ -3,6 +3,10 @@ An Arduino-based soil sensor to measure the temperature and moisture content of 
 
 The sensor is part of a project for an intro to soil sciences class from Colorado State University. 
 
+I gratuitously copied-and-pasted large chunks of code from example pages of each of the devices and I relied heavily on Adafruit documentation as well. I buy a lot of components from them for various other projects and I also pay for the Plus-level of service from [io.Adafruit](https://io.adafruit.com/). I highly recommend them.
+
+There is more detail about the project on the [wiki page](https://github.com/OilSlick/soil_sensor_socr/wiki/Home/).
+
 ### Basic Unit Operation
 
 Collect the following data from two distinct soil locations:

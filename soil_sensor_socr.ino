@@ -38,7 +38,7 @@ byte fullpayload[12];                 // Full payload to be sent
 int sizeofFullPayload;                // Size of full payload
 
 //for local device
-bool debug = 1;
+bool debug = 0;
 float measuredvbat;                   // stores measured charge of battery
 long previousMillis = 0;              // stores the last time data collected
 long intervalMinutes = 300000;        // Polling interval in minutes * 60 * 1000
