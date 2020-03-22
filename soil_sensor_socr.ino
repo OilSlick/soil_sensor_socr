@@ -39,8 +39,11 @@ int sizeofFullPayload;                // Size of full payload
 
 //for local device
 bool debug = 1;
-long previousMillis = 0;              //stores the last time data collected
-long intervalMinutes = 300000;        //Polling interval in minutes * 60 * 1000
+float measuredvbat;                   // stores measured charge of battery
+long previousMillis = 0;              // stores the last time data collected
+long intervalMinutes = 300000;        // Polling interval in minutes * 60 * 1000
+long previousDebugMillis = 0;         // stores the last time debug data collected
+long debugIntervalMinutes = 3600000;  // debug polling interval in minutes * 60 * 1000 (sending debug data to web gateway)
 #define VBATPIN A7
    
 //For temp probes
@@ -58,7 +61,11 @@ int ValueRawMoistureSensorA;          // Raw value returned from moisture sensor
 int ValueRawMoistureSensorB;          // Raw value returned from moisture sensor B
 
 void setup(void) {
-  if ( debug == 1 ) intervalMinutes = 30000; //if debug, use 30-seccond polling intervals   
+  if ( debug == 1 ) 
+  {
+    intervalMinutes = 30000;              //if debug, use 30-seccond polling intervals   
+    debugIntervalMinutes = 30000;
+  }
   if ( Serial ) Serial.begin(115200);
   delay(2000);
   
@@ -103,20 +110,30 @@ void loop(void) {
 
     checkMoisture('B');
     LoRa.sleep();
-
-    //check battery level
-    if ( Serial && debug == 1 ) checkBatt();
     if ( Serial ) Serial.println("Counting electric sheep...");
    }
+   else if ( currentMillis - previousDebugMillis > debugIntervalMinutes )
+  {
+    previousDebugMillis = currentMillis;
+    //check battery level
+    checkBatt();
+    //encode vbat for transmission
+    int convertedvbat = measuredvbat * 100; //2 decimals to 0 decimals, receiver must /100 to decode
+    //encode moisture data and add it to the last two bytes of data[] adapted from: https://www.thethingsnetwork.org/docs/devices/bytes.html
+    data[0] = highByte(convertedvbat);
+    data[1] = lowByte(convertedvbat);
+    //data[0] = byte(convertedvbat);
+    broadcastdata(data, 2, 255);        //255 to indicate status online and vbat info to follow
+  }
 }
 
 void checkBatt()
 {
-  float measuredvbat = analogRead(VBATPIN);
+  measuredvbat = analogRead(VBATPIN);
   measuredvbat *= 2;    // we divided by 2, so multiply back
   measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
   measuredvbat /= 1024; // convert to voltage
-  Serial.print("VBat: " ); Serial.println(measuredvbat);
+  if ( Serial) Serial.print("VBat: " ); Serial.println(measuredvbat);
 }
 void checkMoisture(int probeID)
 {
