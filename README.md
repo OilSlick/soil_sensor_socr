@@ -1,4 +1,6 @@
 # Soil Sensor
+Note: as of 1 May, 2020 the unit is no longer deployed. Water got into the box and shorted the LiPo charger. See [Issue #5](https://github.com/OilSlick/soil_sensor_socr/issues/5#issue-611115337). 
+
 An Arduino-based soil sensor to measure the temperature and moisture content of two different samples of soil; one covered by a broad-leaf carpet grass and the other fully exposed. 
 
 The sensor is part of a project for an intro to soil sciences class from Colorado State University. 
@@ -19,11 +21,3 @@ The sensor itself is functionally complete. Data can be viewed at the following 
 https://io.adafruit.com/mcwresearch/dashboards/soil-sensor-socr
 
 Without an account with Adafruit, you will have to manually refresh the page to see the very latest data. But visitors without accounts can still see a snapshot of the most recent (and all historic) data. 
-
-### Hardware To-Do
-* [x] Complete Perma-Proto board
-* [ ] Connect Adafruit TPL5110 Low Power Timer Breakout (may opt not to...)
-* [x] Connect proper antenna
-
-### Software To-Do
-* [ ] [#1](https://github.com/OilSlick/soil_sensor_socr/issues/1#issue-584777977) Reduce number of transmissions
